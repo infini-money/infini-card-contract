@@ -1,86 +1,35 @@
 
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.20;
 
-/* solhint-disable private-vars-leading-underscore  */
-/* solhint-disable func-name-mixedcase  */
-/* solhint-disable var-name-mixedcase  */
-import "forge-std/console.sol";
-import {stdStorage, StdStorage, Test} from "forge-std/Test.sol";
+import {BaseTest} from "./baseTest.t.sol";
 import {IEthenaMinting} from "@InfiniCard/interfaces/ethena/IEthenaMinting.sol";
+import "forge-std/console.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {CommonUtils} from "@InfiniCard/library/CommonUtils.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IStrategyManager} from  "@InfiniCard/interfaces/IStrategyManager.sol";
 
-contract InfiniEthenaStrategy {
-    using SafeERC20 for IERC20;
-    function setApprove(address fromToken, address spender, uint256 amount) external {
-        IERC20(fromToken).forceApprove(spender, amount);
+contract EthenaStrategyTesting is BaseTest, CommonUtils {
+    function setUp() override public  {
+        super.setUp();
     }
 
-    function setDelegateSigner(address ethenaMintingAddress, address deletegateSinger) external {
-        IEthenaMinting(ethenaMintingAddress).setDelegatedSigner(deletegateSinger);
-    }
-}
-
-contract EthenaTesting is Test {
-    using SafeERC20 for IERC20;
-
-    address shaneson = 0x790ac11183ddE23163b307E3F7440F2460526957;
-    address delegateSinger;
-    address EthenaMintingAddress = 0xe3490297a08d6fC8Da46Edb7B6142E4F461b62D3;
-    address USDTAddress = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
-    address USDEAddress = 0x4c9EDD5852cd905f086C759E8383e09bff1E68B3;
-    address minter = 0xb229D6dB056750E22499191156Bf4c3654DF3826;
-    address default_admin_role = 0x3B0AAf6e6fCd4a7cEEf8c92C32DFeA9E64dC1862;
-
-    uint256 deployerPrivateKey;
-    InfiniEthenaStrategy infiniEthenaStrategy;
-
-    function _packRsv(bytes32 r, bytes32 s, uint8 v) internal pure returns (bytes memory) {
-        bytes memory sig = new bytes(65);
-        assembly {
-        mstore(add(sig, 32), r)
-        mstore(add(sig, 64), s)
-        mstore8(add(sig, 96), v)
-        }
-        return sig;
-    }
-
-    function signOrder(uint256 key, bytes32 digest, IEthenaMinting.SignatureType sigType)
-        public
-        pure
-        returns (IEthenaMinting.Signature memory)
-    {
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(key, digest);
-        bytes memory sigBytes = _packRsv(r, s, v);
-
-        IEthenaMinting.Signature memory signature =
-        IEthenaMinting.Signature({signature_type: sigType, signature_bytes: sigBytes});
-
-        return signature;
-    }
-
-    function setUp() public {
-        deployerPrivateKey = vm.envUint("ADMIN_PRIVATE_KEY");
-        delegateSinger = vm.addr(deployerPrivateKey);
-        vm.createSelectFork("https://eth.llamarpc.com");
-        infiniEthenaStrategy = new InfiniEthenaStrategy();
-
-        infiniEthenaStrategy.setApprove(USDEAddress, EthenaMintingAddress, 100000 * 10**18);
-        infiniEthenaStrategy.setApprove(USDTAddress, EthenaMintingAddress, 100000 * 10**6);
-        infiniEthenaStrategy.setDelegateSigner(EthenaMintingAddress, delegateSinger);
-
-        vm.startPrank(delegateSinger);
-        IEthenaMinting(EthenaMintingAddress).confirmDelegatedSigner(address(infiniEthenaStrategy));
+    function test_mint() public {
+        deal(USDTAddress, address(this), 100000 * 10**6);
+        SafeERC20.safeTransfer(IERC20(USDTAddress), address(infiniCardVault), 100000 * 10**6);
+        vm.startPrank(shaneson);
+        infiniCardVault.invest(
+            uint256(uint160(address(infiniEthenaStrategy))) | _REQUEST_MASK, 
+            100000 * 10**6
+        );
         vm.stopPrank();
-    }
-
-    function test_delegate_mint_on_ethena() public {
-        deal(USDTAddress, address(infiniEthenaStrategy), 100000 * 10**6);
+        require(IERC20(USDTAddress).balanceOf(address(infiniEthenaStrategy)) == 100000 * 10**6, "balance is not enough");
+        console.log( "infiniEthenaStrategy:", address(infiniEthenaStrategy));
 
         address benefactor = address(infiniEthenaStrategy);
         uint128 amountToDeposit = 100 * 10**6;
-        uint128 _usdeToMint = 100 * 10**6;
+        uint128 _usdeToMint = 100 * 10**18;
         IEthenaMinting.Order memory order = IEthenaMinting.Order({
             order_id: "0x101010",
             order_type: IEthenaMinting.OrderType.MINT,
@@ -133,9 +82,17 @@ contract EthenaTesting is Test {
         require(beforeUSDEBalance + _usdeToMint == afterUSDEBalance , "usde amount invalid");
     }
 
-    function test_delegate_redeem_on_ethena() public {
-        deal(USDEAddress, address(infiniEthenaStrategy), 100 * 10**18);
+    function test_redeem() public {
+        deal(USDEAddress, address(infiniEthenaStrategy), 100000 * 10**18);
+        vm.startPrank(shaneson);
+        infiniCardVault.disinvest(
+            uint256(uint160(address(infiniEthenaStrategy))) | _REQUEST_MASK, 
+            100000 * 10**18
+        );
+        vm.stopPrank();
 
+        require(IERC20(USDEAddress).balanceOf(address(infiniEthenaStrategy)) == 100000 * 10**18, "balance is not enough");
+        
         address benefactor = address(infiniEthenaStrategy);
         uint128 amountToRedeem = 100 * 10**6;
         uint128 _usdeToBurn = 100 * 10**18;
@@ -150,7 +107,7 @@ contract EthenaTesting is Test {
             collateral_amount: amountToRedeem,
             usde_amount: _usdeToBurn
         });
-    
+
         bytes32 digest1 = IEthenaMinting(EthenaMintingAddress).hashOrder(order);
         vm.startPrank(default_admin_role);
         IEthenaMinting(EthenaMintingAddress).addWhitelistedBenefactor(benefactor);
@@ -171,4 +128,31 @@ contract EthenaTesting is Test {
         require(beforeUSDTBalance + uint256(amountToRedeem) == afterUSDTalance ,  "usdt amount invalid");
         require(beforeUSDEBalance  == afterUSDEBalance +_usdeToBurn , "usde amount invalid");
     }
+
+    
+    function test_settlement() public {
+        // Ethena send reward to infiniEthenaStrategyManager
+        deal(USDEAddress, address(infiniEthenaStrategyManager), 1000 * 10**18);
+        vm.startPrank(shaneson);
+        uint256 unsettleAmount = 1000 * 10**18;
+
+        IStrategyManager.StrategyStatus memory status = infiniEthenaStrategyManager.getStrategyStatus();
+        require(status.profit == 1000 * 10**18, "CHECK profit1");
+
+        infiniEthenaStrategyManager.settle(unsettleAmount);
+
+        uint256 protocolProfit = unsettleAmount * 500 / 10000;
+
+        require(IERC20(USDEAddress).balanceOf(address(infiniEthenaStrategyManager)) == 0, "CHECK0");
+        require(IERC20(USDEAddress).balanceOf(address(infiniTreasure)) == protocolProfit, "CHECK1");
+        require(IERC20(USDEAddress).balanceOf(address(infiniEthenaStrategy)) == unsettleAmount - protocolProfit, "CHECK2");
+
+        status = infiniEthenaStrategyManager.getStrategyStatus();
+        require(status.profit == 0, "CHECK profit2");
+        require(status.poistion == unsettleAmount - protocolProfit, "CHECK profit3");
+
+        vm.stopPrank();
+    }
+
+
 }
