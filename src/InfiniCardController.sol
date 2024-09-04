@@ -36,13 +36,13 @@ contract InfiniCardController is AccessControl, CommonUtils {
         custodianWhiteList[cusdian] = false;
     }
 
-    function isStrategyValid(address strategy) public view {
+    function _isStrategyValid(address strategy) internal view {
         if (!strategyWhiteList[strategy]) {
             revert StrategyInvalid(); 
         }
     }
 
-    function isCusdianValid(address cusdian) public view  {
+    function _isCusdianValid(address cusdian) internal view  {
         if (!custodianWhiteList[cusdian]) {
             revert CustianInvalid();
         }

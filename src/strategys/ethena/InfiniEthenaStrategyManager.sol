@@ -2,59 +2,41 @@
 pragma solidity ^0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IStrategyVault} from "@InfiniCard/interfaces/IStrategyVault.sol";
-import {IStrategyManager} from  "@InfiniCard/interfaces/IStrategyManager.sol";
+import {BaseStrategyManager} from "@InfiniCard/strategys/BaseStrategyManager.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import {IStrategyVault} from "@InfiniCard/interfaces/IStrategyVault.sol";
 
-contract InfiniEthenaStrategyManager is IStrategyManager, AccessControl {
+contract InfiniEthenaStrategyManager is BaseStrategyManager {
     using SafeERC20 for IERC20;
 
-    bytes32 private constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    constructor(
+        address _strategy, 
+        address _treasure, 
+        address _adminRole
+    ) BaseStrategyManager(_strategy, _treasure, _adminRole) {}
 
-    address private immutable infiniTreasure;
-    address private immutable strategyVault;
-    address private immutable usde;
-    uint256 carryRate = 500;
-
-    error ProfitIsNotEnough();
-
-    event Settlement(address usde, uint256 protocolProfit, uint256 settleProfit);
-
-    constructor(address _strategy, address _treasure, address _adminRole) {
-        strategyVault = _strategy;
-        infiniTreasure = _treasure;
-        usde = IStrategyVault(strategyVault).shareToken();
-
-        _grantRole(ADMIN_ROLE, _adminRole);
-    }
-
-    function getProfit() public view returns(uint256) {
-        return IERC20(usde).balanceOf(address(this));
-    }
-
-    function getPosition() public view returns(uint256) {
-        return IERC20(usde).balanceOf(strategyVault);
-    }
-
-    function getStrategyStatus() external returns (StrategyStatus memory status) {
+    function getStrategyStatus() external override returns (StrategyStatus memory status) {
         status = StrategyStatus({
-            poistion: getPosition(),
-            profit: getProfit()
+            poistion: IStrategyVault(strategyVault).getPosition(),
+            profit: _getProfit()
         });
     }
 
-    function settle(uint256 unSettleProfit) external onlyRole(ADMIN_ROLE) {
-        uint256 profit = getProfit();
+    function settle(uint256 unSettleProfit) external override onlyRole(ADMIN_ROLE) {
+        uint256 profit = _getProfit();
         if (profit < unSettleProfit) revert ProfitIsNotEnough();
 
         uint256 protocolProfit = unSettleProfit * carryRate / 10000;
         uint256 settleProfit = unSettleProfit - protocolProfit;
 
-        IERC20(usde).transfer(infiniTreasure, protocolProfit);
-        IERC20(usde).transfer(strategyVault, settleProfit);
+        IERC20(profitToken).transfer(infiniTreasure, protocolProfit);
+        IERC20(profitToken).transfer(strategyVault, settleProfit);
 
-        emit Settlement(usde, protocolProfit, settleProfit);
+        emit Settlement(profitToken, protocolProfit, settleProfit);
+    }
+
+    function _getProfit() internal view returns(uint256) {
+        return IERC20(profitToken).balanceOf(address(this));
     }
 
 }

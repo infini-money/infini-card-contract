@@ -2,7 +2,9 @@
 pragma solidity ^0.8.20;
 
 interface IStrategyManager {
-    
+    error ProfitIsNotEnough();
+
+    event Settlement(address profitToken, uint256 protocolProfit, uint256 settleProfit);
     struct StrategyStatus {
         uint256 poistion;
         uint256 profit;

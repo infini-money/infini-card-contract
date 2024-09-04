@@ -20,7 +20,7 @@ contract EthenaStrategyTesting is BaseTest, CommonUtils {
         SafeERC20.safeTransfer(IERC20(USDTAddress), address(infiniCardVault), 100000 * 10**6);
         vm.startPrank(shaneson);
         infiniCardVault.invest(
-            uint256(uint160(address(infiniEthenaStrategy))) | _REQUEST_MASK, 
+            address(infiniEthenaStrategy),
             100000 * 10**6
         );
         vm.stopPrank();
@@ -85,8 +85,8 @@ contract EthenaStrategyTesting is BaseTest, CommonUtils {
     function test_redeem() public {
         deal(USDEAddress, address(infiniEthenaStrategy), 100000 * 10**18);
         vm.startPrank(shaneson);
-        infiniCardVault.disinvest(
-            uint256(uint160(address(infiniEthenaStrategy))) | _REQUEST_MASK, 
+        infiniCardVault.redeem(
+            address(infiniEthenaStrategy), 
             100000 * 10**18
         );
         vm.stopPrank();

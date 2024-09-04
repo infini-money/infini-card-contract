@@ -2,7 +2,9 @@
 pragma solidity ^0.8.20;
 
 interface IStrategyVault {
-   function name() external view returns (string memory);
+    function name() external view returns (string memory);
+
+    function getPosition() external view returns(uint256);
 
     function underlyingToken() external view returns (address);
 
@@ -10,11 +12,7 @@ interface IStrategyVault {
 
     function deposit(uint256 _amount) external;
 
-    function requestDeposit(uint256 _amount) external;
-
     function redeem(uint256 _amount) external;
-
-    function requestRedeem(uint256 _amount) external;
 
     function withdraw(address token, uint256 _amount) external;
 
