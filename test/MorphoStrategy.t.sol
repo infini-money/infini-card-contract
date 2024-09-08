@@ -6,13 +6,13 @@ pragma solidity ^0.8.20;
 import {BaseTest} from "./baseTest.t.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {CommonUtils} from "@InfiniCard/library/CommonUtils.sol";
+import {StrategyUtils} from "@InfiniCard/library/StrategyUtils.sol";
 import "forge-std/console.sol";
 import {IStrategyManager} from  "@InfiniCard/interfaces/IStrategyManager.sol";
 import {IStrategyVault} from "@InfiniCard/interfaces/IStrategyVault.sol";
 
 
-contract MorphoStrategyTesting is BaseTest, CommonUtils {
+contract MorphoStrategyTesting is BaseTest, StrategyUtils {
     function setUp() override public  {
         super.setUp();
     }

@@ -6,11 +6,11 @@ import {BaseTest} from "./baseTest.t.sol";
 import {IEthenaMinting} from "@InfiniCard/interfaces/ethena/IEthenaMinting.sol";
 import "forge-std/console.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {CommonUtils} from "@InfiniCard/library/CommonUtils.sol";
+import {StrategyUtils} from "@InfiniCard/library/StrategyUtils.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IStrategyManager} from  "@InfiniCard/interfaces/IStrategyManager.sol";
 
-contract EthenaStrategyTesting is BaseTest, CommonUtils {
+contract EthenaStrategyTesting is BaseTest, StrategyUtils {
     function setUp() override public  {
         super.setUp();
     }

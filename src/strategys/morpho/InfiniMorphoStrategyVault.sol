@@ -42,10 +42,12 @@ contract InfiniMorphoStrategyVault is BaseStrategyVault, IStrategyManager {
         return vaultPosition;
     }
 
-    function getStrategyStatus() external returns (StrategyStatus memory status) {
+    function getStrategyStatus() external view override returns (StrategyStatus memory status) {
         status = StrategyStatus({
             poistion: vaultPosition,
-            profit: getProfit()
+            profit: getProfit(),
+            underlyingToken: underlyingToken,
+            strategyAddress: address(this)
         });
     }
 

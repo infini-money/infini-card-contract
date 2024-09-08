@@ -1,0 +1,80 @@
+[
+  {
+    "type": "function",
+    "name": "getStrategyStatus",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct IStrategyManager.StrategyStatus",
+        "components": [
+          {
+            "name": "poistion",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "profit",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "underlyingToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "strategyAddress",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "settle",
+    "inputs": [
+      {
+        "name": "unSettleProfit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "Settlement",
+    "inputs": [
+      {
+        "name": "profitToken",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "protocolProfit",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "settleProfit",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "ProfitIsNotEnough",
+    "inputs": []
+  }
+]

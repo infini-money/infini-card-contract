@@ -8,9 +8,11 @@ interface IStrategyManager {
     struct StrategyStatus {
         uint256 poistion;
         uint256 profit;
+        address underlyingToken;
+        address strategyAddress;
     }
 
-    function getStrategyStatus() external returns (StrategyStatus memory);
+    function getStrategyStatus() external view returns (StrategyStatus memory);
 
     function settle(uint256 unSettleProfit) external;
 }

@@ -23,5 +23,5 @@ abstract contract BaseStrategyManager is IStrategyManager, AccessControl {
 
     function settle(uint256 unSettleProfit) external virtual {}
 
-    function getStrategyStatus() external virtual returns (StrategyStatus memory status)  {}
+    function getStrategyStatus() external virtual view returns (StrategyStatus memory status)  {}
 }
