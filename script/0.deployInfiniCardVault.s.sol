@@ -10,9 +10,6 @@ import {InfiniEthenaStrategyManager} from "../src/strategys/ethena/InfiniEthenaS
 
 contract DeployInfiniCardVault is Script {
     // forge script script/0.deployInfiniCardVault.s.sol:DeployInfiniCardVault --broadcast --rpc-url https://eth.llamarpc.com --legacy
-    //   vault: 0x1eDE905c7e3CcA39894333f7E7fd2751CeD68a21
-    //   ethena strategy: 0x0280e57c5A352d98632b9Fde01d4D6AD987306D5
-    //   morpho strategy: 0x135BfAcB085376E612e2BF3e6f33FFF722bBE5C9
 
     function run() external {
         uint256 adminPrivateKey = vm.envUint("ADMIN_PRIVATE_KEY");
@@ -22,10 +19,9 @@ contract DeployInfiniCardVault is Script {
         address USDE = 0x4c9EDD5852cd905f086C759E8383e09bff1E68B3;
         address shaneson = 0x790ac11183ddE23163b307E3F7440F2460526957;
         
-
         vm.startBroadcast(adminPrivateKey);
 
-        InfiniCardVault vault = new InfiniCardVault(adminRole, adminRole);
+        InfiniCardVault vault = new InfiniCardVault(adminRole, adminRole, adminRole);
         vault.grantRole(vault.DEFAULT_ADMIN_ROLE(), adminRole);
         vault.addCusdianToWhiteList(shaneson);
 
@@ -35,7 +31,7 @@ contract DeployInfiniCardVault is Script {
         InfiniEthenaStrategyVault ethena = new InfiniEthenaStrategyVault(
             adminRole,
             address(vault),
-            USDT,
+            USDC,
             USDE,
             EthenaMintingAddress
         );
@@ -53,7 +49,7 @@ contract DeployInfiniCardVault is Script {
             adminRole,
             address(vault),
             USDC,
-            USDE,
+            MorphoMarket,
             MorphoMarket,
             adminRole
         );

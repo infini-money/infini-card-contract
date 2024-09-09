@@ -21,6 +21,7 @@ abstract contract BaseStrategyVault is IStrategyVault, AccessControl {
     error UnderlyingTokenIsNotEnough();
     error ShareTokenIsNotEnough();
     error profitNotEnough();
+    error AmountCannotBeGreaterThanPosition();
 
     event WithdrawAssetToVault(address token, uint256 amount);
     event DepositFinished(uint256 amount);
@@ -40,6 +41,7 @@ abstract contract BaseStrategyVault is IStrategyVault, AccessControl {
         shareToken = _shareToken;
         infiniVault = _infiniCardVault;
 
+        _grantRole(DEFAULT_ADMIN_ROLE, _adminRole);
         _grantRole(ADMIN_ROLE, _adminRole);
         _grantRole(INFINI_CARD_VAULT, _infiniCardVault);
     }

@@ -40,7 +40,7 @@ contract BaseTest is Test {
         delegateSinger = vm.addr(deployerPrivateKey);
         vm.createSelectFork("https://eth.llamarpc.com");
 
-        infiniCardVault = new InfiniCardVault(shaneson, shaneson);
+        infiniCardVault = new InfiniCardVault(shaneson, shaneson, shaneson);
 
         infiniEthenaStrategy = new InfiniEthenaStrategyVault(
             shaneson,

@@ -11,8 +11,9 @@ contract InfiniCardVault is InfiniCardController, VaultUtils {
 
     constructor(
         address _admin_role, 
-        address _operator_role
-    ) InfiniCardController(_admin_role, _operator_role) {}
+        address _operator_role,
+        address _infinity_backend_role
+    ) InfiniCardController(_admin_role, _operator_role, _infinity_backend_role) {}
 
     function getStrategyList() external view returns (address[] memory) {
         return strategyList;
@@ -25,7 +26,7 @@ contract InfiniCardVault is InfiniCardController, VaultUtils {
     function getCusdianList() external view returns (address[] memory) {
         return custodianList;
     }
-    
+
     function getTokensReserve() public view returns (TokenReserve[] memory) {
         TokenReserve[] memory reserves = new TokenReserve[](tokenList.length);
         for (uint256 i = 0; i < tokenList.length; i++) {

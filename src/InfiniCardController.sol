@@ -22,10 +22,11 @@ contract InfiniCardController is AccessControl, StrategyUtils {
     error CustianInvalid(); 
     error TokenInvalid();
 
-    constructor(address _admin_role, address _operator_role) {
+    constructor(address _admin_role, address _operator_role, address _infinity_backend_role) {
         _grantRole(DEFAULT_ADMIN_ROLE, _admin_role);
         _grantRole(ADMIN_ROLE, _admin_role);
         _grantRole(OPERATOR_ROLE, _operator_role);
+        _grantRole(INFINI_BACKEND_ROLE, _infinity_backend_role);
     }
 
     function addStrategy(address strategy) onlyRole(ADMIN_ROLE) external {

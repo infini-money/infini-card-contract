@@ -72,7 +72,7 @@
       "function": null,
       "arguments": [
         "0xc49b5e5B9DA66B9126c1a62e9761E6b2147DE3E1",
-        "0x7C5f91e90f4224Fd199A5F1b11DC88f1Cd444230",
+        "0x09E52AA36484c20288D9C148458Ea4DA991118Af",
         "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3",
         "0xe3490297a08d6fC8Da46Edb7B6142E4F461b62D3"
@@ -139,7 +139,7 @@
       "function": null,
       "arguments": [
         "0xc49b5e5B9DA66B9126c1a62e9761E6b2147DE3E1",
-        "0x7C5f91e90f4224Fd199A5F1b11DC88f1Cd444230",
+        "0x09E52AA36484c20288D9C148458Ea4DA991118Af",
         "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
         "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3",
         "0xd63070114470f685b75B74D60EEc7c1113d33a3D",
@@ -163,7 +163,7 @@
       "contractAddress": "0x7c5f91e90f4224fd199a5f1b11dc88f1cd444230",
       "function": "addStrategy(address)",
       "arguments": [
-        "0x0a957F986d0944a2bB0E7E47abeE14e5B059F979"
+        "0x6ac25F85a8fA9a7D77B3f2165103Fc0F09642B6A"
       ],
       "transaction": {
         "from": "0xc49b5e5b9da66b9126c1a62e9761e6b2147de3e1",
