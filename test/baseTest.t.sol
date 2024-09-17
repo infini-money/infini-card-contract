@@ -38,7 +38,8 @@ contract BaseTest is Test {
     function setUp() virtual public {
         deployerPrivateKey = vm.envUint("ADMIN_PRIVATE_KEY");
         delegateSinger = vm.addr(deployerPrivateKey);
-        vm.createSelectFork("https://eth.llamarpc.com");
+        vm.createSelectFork("https://rpc.mevblocker.io");
+        
 
         infiniCardVault = new InfiniCardVault(shaneson, shaneson, shaneson);
 
@@ -70,6 +71,8 @@ contract BaseTest is Test {
         infiniEthenaStrategy.setDelegateSigner(delegateSinger);
         infiniCardVault.addStrategy(address(infiniEthenaStrategy));
         infiniCardVault.addStrategy(address(infiniMorphoStrategy));
+
+        infiniCardVault.addCusdianToWhiteList(shaneson);
         vm.stopPrank();
 
 

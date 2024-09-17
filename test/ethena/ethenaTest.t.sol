@@ -63,7 +63,7 @@ contract EthenaTesting is Test {
     function setUp() public {
         deployerPrivateKey = vm.envUint("ADMIN_PRIVATE_KEY");
         delegateSinger = vm.addr(deployerPrivateKey);
-        vm.createSelectFork("https://eth.llamarpc.com");
+        vm.createSelectFork("https://rpc.mevblocker.io");
         infiniEthenaStrategy = new InfiniEthenaStrategy();
 
         infiniEthenaStrategy.setApprove(USDEAddress, EthenaMintingAddress, 100000 * 10**18);

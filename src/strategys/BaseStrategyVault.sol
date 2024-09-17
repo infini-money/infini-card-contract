@@ -46,15 +46,17 @@ abstract contract BaseStrategyVault is IStrategyVault, AccessControl {
         _grantRole(INFINI_CARD_VAULT, _infiniCardVault);
     }
 
-    function withdraw(address token, uint256 amount) virtual external onlyRole(INFINI_CARD_VAULT) {
-        // Use actualAmount to withdraw
-        uint256 actualAmount = IERC20(token).balanceOf(address(this));
-        if ( actualAmount < amount ) {
-            amount = actualAmount;
+    function withdraw(address token, uint256 amount) virtual external onlyRole(INFINI_CARD_VAULT) returns(uint256 actualAmount) {
+        uint256 vaultBalance = IERC20(token).balanceOf(address(this));
+
+        if ( vaultBalance < amount ) {
+            actualAmount = vaultBalance;
+        } else {
+            actualAmount = amount;
         }
 
-        SafeERC20.safeTransfer(IERC20(token), infiniVault, amount);
-        emit WithdrawAssetToVault(token, amount);
+        SafeERC20.safeTransfer(IERC20(token), infiniVault, actualAmount);
+        emit WithdrawAssetToVault(token, actualAmount);
     }
 
     function getBalance(address token) public view returns (uint256 amount) {
@@ -69,7 +71,7 @@ abstract contract BaseStrategyVault is IStrategyVault, AccessControl {
 
     function deposit(uint256 _amount) virtual external {}
 
-    function redeem(uint256 _amount) virtual external {}
+    function redeem(uint256 _amount) virtual external returns (uint256 actualRedeemedAmount) {}
 
     function harvest() external returns (uint256 amount) {}
 }

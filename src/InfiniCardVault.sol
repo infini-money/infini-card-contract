@@ -35,29 +35,41 @@ contract InfiniCardVault is InfiniCardController, VaultUtils {
         return reserves;
     }   
 
+    //TODO: Optimizate the codes
     function withdrawToCEX(
         address token,
         uint256 amount,
-        address custodian
-    ) onlyRole(INFINI_BACKEND_ROLE) external {
+        address custodian,
+        address strategy
+    ) onlyRole(INFINI_BACKEND_ROLE) external returns(uint256 actualAmount) {
         _isTokenValid(token);
         _isCusdianValid(custodian);
-        _isBalanceEnough(token, amount);
+        actualAmount = amount;
 
-        _transferAsset(token, amount, custodian);
-        emit WithdrawAssetToCustodian(token, amount, custodian);
+        if(_isBalanceEnough(address(this), token, amount)) {
+            _transferAsset(token, actualAmount, custodian);
+        } else {
+            address underlyingToken = IStrategyVault(strategy).underlyingToken();
+            if(underlyingToken != token) {
+                revert TokenMismatch();
+            }
+
+            // amount maybe changed (less than requested, due to slippage/fee/etc.), 
+            // so we use actualGetAmount to withdraw
+            actualAmount = _withdraw_from_strategy(strategy, amount);
+            _transferAsset(token, actualAmount, custodian);
+        }
+
+        emit WithdrawAssetToCustodian(token, actualAmount, custodian, strategy);
     }
 
     function withdrawFromStrategy(
         address strategy, 
         uint256 amount
     ) onlyRole(OPERATOR_ROLE) external {
-        _isStrategyValid(strategy);
+        _withdraw_from_strategy(strategy, amount);
 
-        address underlyingToken = IStrategyVault(strategy).underlyingToken();
-        IStrategyVault(strategy).withdraw(underlyingToken, amount);
-
-        emit WithdrawAssetFromStrategy(underlyingToken, amount, strategy);
+        emit WithdrawAssetFromStrategy(strategy, amount);
     }
     
     function invest(
@@ -77,12 +89,12 @@ contract InfiniCardVault is InfiniCardController, VaultUtils {
     function redeem(
         address strategy, 
         uint256 amount
-    )  onlyRole(OPERATOR_ROLE) external {
+    )  onlyRole(OPERATOR_ROLE) external returns (uint256 actualAmount) {
         _isStrategyValid(strategy);
 
-        IStrategyVault(strategy).redeem(amount);
+        actualAmount = IStrategyVault(strategy).redeem(amount);
         
-        emit DivestWithStaregy(strategy, amount);
+        emit DivestWithStaregy(strategy, actualAmount);
     }
 
 

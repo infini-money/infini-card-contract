@@ -12,9 +12,9 @@ interface IStrategyVault {
 
     function deposit(uint256 _amount) external;
 
-    function redeem(uint256 _amount) external;
+    function redeem(uint256 _amount) external returns (uint256);
 
-    function withdraw(address token, uint256 _amount) external;
+    function withdraw(address token, uint256 _amount) external returns (uint256);
 
     function harvest() external returns (uint256 amount);
 }
