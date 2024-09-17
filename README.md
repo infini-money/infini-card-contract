@@ -1,66 +1,114 @@
-## Foundry
+# InfiniCard Vault
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Overview
 
-Foundry consists of:
+InfiniCard Vault is a decentralized asset management platform designed to efficiently manage and grow assets through various strategies. The platform supports multiple strategies, including Ethena and Morpho, allowing users to deposit, withdraw, and settle profits.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Contract Structure
 
-## Documentation
+### Main Contracts
 
-https://book.getfoundry.sh/
+1. **InfiniCardVault.sol**
+   - The primary asset management contract responsible for adding strategies, investing assets, and redeeming assets.
 
-## Usage
+2. **InfiniCardController.sol**
+   - The controller contract that manages the whitelist of strategies and custodians.
 
-### Build
+3. **InfiniEthenaStrategyVault.sol**
+   - The Ethena strategy contract, inheriting from BaseStrategyVault, implements the specific deposit and redeem operations for the Ethena strategy.
 
-```shell
-$ forge build
+4. **InfiniMorphoStrategyVault.sol**
+   - The Morpho strategy contract, inheriting from BaseStrategyVault, implements the specific deposit and redeem operations for the Morpho strategy.
+
+
+## Core Vault InfiniCardVault
+
+// TODO: translate to English
+// InfiniCardVault is a contract designed for backend integration, allowing backend operations such as deposits and withdrawals through this contract.
+
+### DepositToVault
+
+The administrator will transfer money directly from the CEX to the InfiniCardVault contract. Then the strategy administrator will call the investment function to transfer the tokens to the corresponding strategy contract.
+
+
+```solidity
+IERC20(token).TransferFrom(CEX, Vault, amount)
 ```
 
-### Test
+### WithdrawToCEX
+When the Admin needs to withdraw funds from InfiniCardVault to the CEX, the WithdrawToCEX function will be called.
 
-```shell
-$ forge test
+
+```solidity
+    function withdrawToCEX(
+        address token,
+        uint256 amount,
+        address custodian
+    ) onlyRole(INFINI_BACKEND_ROLE) external {
+        _isTokenValid(token);
+        _isCusdianValid(custodian);
+        _isBalanceEnough(token, amount);
+
+        _transferAsset(token, amount, custodian);
+        emit WithdrawAssetToCustodian(token, amount, custodian);
+    }
 ```
 
-### Format
+## Core Strategy Vault
 
-```shell
-$ forge fmt
-```
+### Morpho
 
-### Gas Snapshots
 
-```shell
-$ forge snapshot
-```
 
-### Anvil
+### Ethena
 
-```shell
-$ anvil
-```
 
-### Deploy
+### Deployment
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+1. Deploy the contracts using the `forge` tool with the following command:
+   ```bash
+   forge script script/0.deployInfiniCardVault.s.sol:DeployInfiniCardVault --broadcast --rpc-url https://eth.llamarpc.com --legacy
+   ```
 
-### Cast
+### Usage
 
-```shell
-$ cast <subcommand>
-```
+1. **Add Strategy**
+   - Administrators can add new strategies using the `addStrategy` function.
+   ```solidity
+   function addStrategy(address strategy) onlyRole(ADMIN_ROLE) external;
+   ```
 
-### Help
+2. **Invest**
+   - Users can invest assets into a specified strategy using the `invest` function.
+   ```solidity
+   function invest(address strategy, uint256 amount) onlyRole(OPERATOR_ROLE) external payable;
+   ```
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+3. **Redeem**
+   - Users can redeem assets from a specified strategy using the `redeem` function.
+   ```solidity
+   function redeem(address strategy, uint256 amount) onlyRole(OPERATOR_ROLE) external;
+   ```
+
+4. **Settle Profits**
+   - Administrators can settle profits for a strategy using the `settle` function.
+   ```solidity
+   function settle(uint256 unSettleProfit) external onlyRole(ADMIN_ROLE);
+   ```
+
+## Testing
+
+1. Test the contracts using the `forge` tool with the following command:
+   ```bash
+   forge test
+   ```
+
+2. Test files include:
+   - `test/baseTest.t.sol`
+   - `test/EthenaStrategy.t.sol`
+   - `test/MorphoStrategy.t.sol`
+
+## License
+
+This project is licensed under the BUSL-1.1 License.
+

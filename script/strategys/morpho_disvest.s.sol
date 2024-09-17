@@ -11,7 +11,7 @@ import {InfiniMorphoStrategyVault} from "../../src/strategys/morpho/InfiniMorpho
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
 contract MorphoDisvestScript is Script {
-    // forge script script/strategys/morpho_disvest.s.sol:MorphoDisvestScript --rpc-url https://eth.llamarpc.com --broadcast --legacy
+    // forge script script/strategys/morpho_disvest.s.sol:MorphoDisvestScript --rpc-url https://eth-pokt.nodies.app --broadcast --legacy
     function run() external {
 
         uint256 adminPrivateKey = vm.envUint("ADMIN_PRIVATE_KEY");
@@ -51,8 +51,8 @@ contract MorphoDisvestScript is Script {
         uint256 usdcBalance2 = IERC20(USDC).balanceOf(infiniCardVault);
         console.log("usdcBalance2", usdcBalance2);
 
-        InfiniCardVault(infiniCardVault).withdrawToCEX(USDC, usdcBalance2, shaneson);
-        console.log("withdrawToCEX finished");
+        // InfiniCardVault(infiniCardVault).withdrawToCEX(USDC, usdcBalance2, shaneson);
+        // console.log("withdrawToCEX finished");
 
         vm.stopBroadcast();
 

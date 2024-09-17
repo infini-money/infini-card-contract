@@ -29,13 +29,15 @@ contract InfiniEthenaStrategyVault is BaseStrategyVault {
         return IERC20(shareToken).balanceOf(address(this));
     }
 
+    //TODO: 需要传入signature，第一是验证签名，第二是得到实际需要deposit的USDT的数量
     function deposit(uint256 amount) external override onlyRole(INFINI_CARD_VAULT) {
         if ( getBalance(underlyingToken) < amount ) revert UnderlyingTokenIsNotEnough();
         SafeERC20.forceApprove(IERC20(underlyingToken), ethenaMintingAddress, amount);
         emit DepositFinished(amount);
     }
 
-    function redeem(uint256 amount) external override onlyRole(INFINI_CARD_VAULT) {
+    //TODO: 需要传入signature，第一是验证签名，第二是得到实际赎回的USDT的数量
+    function redeem(uint256 amount) external override onlyRole(INFINI_CARD_VAULT) returns (uint256 actualRedeemedAmount) {
         if ( getBalance(shareToken) < amount) revert ShareTokenIsNotEnough();
         SafeERC20.forceApprove(IERC20(shareToken), ethenaMintingAddress, amount);
         emit RedeemFinished(amount);

@@ -21,6 +21,7 @@ contract InfiniCardController is AccessControl, StrategyUtils {
     error StrategyInvalid();
     error CustianInvalid(); 
     error TokenInvalid();
+    error TokenMismatch();
 
     constructor(address _admin_role, address _operator_role, address _infinity_backend_role) {
         _grantRole(DEFAULT_ADMIN_ROLE, _admin_role);
@@ -50,6 +51,22 @@ contract InfiniCardController is AccessControl, StrategyUtils {
         tokenWhiteList[token] = true;
         tokenList.push(token);
     }   
+
+    function _withdraw_from_strategy(
+        address strategy,
+        uint256 amount
+    ) internal returns (uint256 actualGetAmount) {
+        _isStrategyValid(strategy);
+
+        address underlyingToken = IStrategyVault(strategy).underlyingToken();
+        if (_isBalanceEnough(strategy, underlyingToken, amount)) {
+            actualGetAmount = IStrategyVault(strategy).withdraw(underlyingToken, amount);
+        } else {
+            uint256 actualRedeemedAmount = IStrategyVault(strategy).redeem(amount);
+
+            actualGetAmount = IStrategyVault(strategy).withdraw(underlyingToken, actualRedeemedAmount);            
+        }
+    }
 
     function _isTokenValid(address token) internal view {
         if (!tokenWhiteList[token]) {

@@ -53,7 +53,7 @@ contract MorphoStrategyTesting is BaseTest, StrategyUtils {
         // redeem
         vm.warp(block.timestamp + 2 weeks);
         vm.startPrank(shaneson);
-        infiniCardVault.redeem(
+        uint256 actualAmount = infiniCardVault.redeem(
             address(infiniMorphoStrategy),
             amount * 2
         );
@@ -62,10 +62,11 @@ contract MorphoStrategyTesting is BaseTest, StrategyUtils {
         uint256 _profit2 = infiniMorphoStrategy.getProfit();
         console.log(_profit2);
 
-        require(IERC20(USDCAddress).balanceOf(address(infiniMorphoStrategy)) == 199999999999, "check redeem result");
+        require(IERC20(USDCAddress).balanceOf(address(infiniMorphoStrategy)) == actualAmount, "check redeem result");
  
         IStrategyManager.StrategyStatus memory status = IStrategyManager(address(infiniMorphoStrategy)).getStrategyStatus();
-        require(status.poistion == 2 * amount - 199999999999, "check status posistion");
+  
+        require(status.poistion == 2 * amount - actualAmount, "check status posistion");
         require(status.profit == _profit2, "check status profit");
     }
 }
