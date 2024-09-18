@@ -5,8 +5,9 @@ import {IStrategyVault} from "@InfiniCard/interfaces/IStrategyVault.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {VaultUtils} from "./library/VaultUtils.sol";
+import {IInfiniCardVault} from "./interfaces/IInfiniCardVault.sol";
 
-contract InfiniCardVault is InfiniCardController, VaultUtils {
+contract InfiniCardVault is IInfiniCardVault, InfiniCardController, VaultUtils {
     using SafeERC20 for IERC20;
 
     constructor(
@@ -35,7 +36,6 @@ contract InfiniCardVault is InfiniCardController, VaultUtils {
         return reserves;
     }   
 
-    //TODO: Optimizate the codes
     function withdrawToCEX(
         address token,
         uint256 amount,
@@ -46,9 +46,12 @@ contract InfiniCardVault is InfiniCardController, VaultUtils {
         _isCusdianValid(custodian);
         actualAmount = amount;
 
-        if(_isBalanceEnough(address(this), token, amount)) {
-            _transferAsset(token, actualAmount, custodian);
-        } else {
+        // if balance is not enough, try to withdraw from strategy
+        if( !_isBalanceEnough(address(this), token, amount)) {
+            if (strategy == address(0)) {
+                revert StrategyNotSet();
+            }
+
             address underlyingToken = IStrategyVault(strategy).underlyingToken();
             if(underlyingToken != token) {
                 revert TokenMismatch();
@@ -57,8 +60,9 @@ contract InfiniCardVault is InfiniCardController, VaultUtils {
             // amount maybe changed (less than requested, due to slippage/fee/etc.), 
             // so we use actualGetAmount to withdraw
             actualAmount = _withdraw_from_strategy(strategy, amount);
-            _transferAsset(token, actualAmount, custodian);
         }
+
+        _transferAsset(token, actualAmount, custodian);
 
         emit WithdrawAssetToCustodian(token, actualAmount, custodian, strategy);
     }

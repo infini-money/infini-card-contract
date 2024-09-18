@@ -10,6 +10,8 @@ import {InfiniCardVault} from "../../src/InfiniCardVault.sol";
 import {InfiniMorphoStrategyVault} from "../../src/strategys/morpho/InfiniMorphoStrategyVault.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
+import {IInfiniCardVault} from "../../src/interfaces/IInfiniCardVault.sol";
+
 contract MorphoDisvestScript is Script {
     // forge script script/strategys/morpho_disvest.s.sol:MorphoDisvestScript --rpc-url https://eth-pokt.nodies.app --broadcast --legacy
     function run() external {
@@ -41,18 +43,18 @@ contract MorphoDisvestScript is Script {
         uint256 position = InfiniMorphoStrategyVault(morpho).getPosition();
         console.log("position", position);
 
-        InfiniCardVault(infiniCardVault).redeem(address(morpho), position );
+        IInfiniCardVault(infiniCardVault).redeem(address(morpho), position );
         console.log("redeem finished");
 
         uint256 usdcBalance = IERC20(USDC).balanceOf(morpho);
-        InfiniCardVault(infiniCardVault).withdrawFromStrategy(address(morpho), usdcBalance);
+        IInfiniCardVault(infiniCardVault).withdrawFromStrategy(address(morpho), usdcBalance);
         console.log("withdraw finished");
 
         uint256 usdcBalance2 = IERC20(USDC).balanceOf(infiniCardVault);
         console.log("usdcBalance2", usdcBalance2);
 
-        // InfiniCardVault(infiniCardVault).withdrawToCEX(USDC, usdcBalance2, shaneson);
-        // console.log("withdrawToCEX finished");
+        IInfiniCardVault(infiniCardVault).withdrawToCEX(USDC, usdcBalance2, shaneson, address(morpho));
+        console.log("withdrawToCEX finished");
 
         vm.stopBroadcast();
 

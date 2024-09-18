@@ -16,6 +16,7 @@ contract InfiniCardController is AccessControl, StrategyUtils {
 
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+    address public constant WITHDRAWOUT_STRATEGY_ADDRESS = address(0);
     bytes32 public constant INFINI_BACKEND_ROLE = keccak256("INFINI_BACKEND_ROLE");
 
     error StrategyInvalid();
