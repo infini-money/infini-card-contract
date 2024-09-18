@@ -9,7 +9,7 @@ import {InfiniMorphoStrategyVault} from "../src/strategys/morpho/InfiniMorphoStr
 import {InfiniEthenaStrategyManager} from "../src/strategys/ethena/InfiniEthenaStrategyManager.sol";
 
 contract DeployInfiniCardVault is Script {
-    // forge script script/0.deployInfiniCardVault.s.sol:DeployInfiniCardVault --broadcast --rpc-url https://eth.llamarpc.com --legacy
+    // forge script script/0.deployInfiniCardVault.s.sol:DeployInfiniCardVault --broadcast --rpc-url https://rpc.mevblocker.io --legacy
 
     function run() external {
         uint256 adminPrivateKey = vm.envUint("ADMIN_PRIVATE_KEY");
@@ -55,10 +55,10 @@ contract DeployInfiniCardVault is Script {
         );
         vault.addStrategy(address(morpho));
 
-        console2.log( "vault:", address(vault));
-        console2.log( "ethena strategy:", address(ethena));
-        console2.log( "ethena manager:", address(ethenaManager));
-        console2.log( "morpho strategy:", address(morpho));
+        console2.log( "address vault =", address(vault));
+        console2.log( "address ethena_strategy = ", address(ethena));
+        console2.log( "address ethena_manager = ", address(ethenaManager));
+        console2.log( "address morpho_strategy = ", address(morpho));
 
         vm.stopBroadcast();
     }
