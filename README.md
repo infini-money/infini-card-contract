@@ -89,9 +89,10 @@ Put the underlying Token into Morpho's Vault and increase the vaultPosition. (Th
 
         emit DepositFinished(amount);
     }
-    ```
+```
 
 2）redeem
+
 Redeem some of the positions from Morpho's Vault, minus the vaultPosition positions.
 
 ```solidity
@@ -112,6 +113,7 @@ Redeem some of the positions from Morpho's Vault, minus the vaultPosition positi
 
 
 3）settle
+
 The undistributed effortless interest is distributed into the poistion, part of which is collected into the treasury and part of which is reinvested in the position.
 
 ```solidity
