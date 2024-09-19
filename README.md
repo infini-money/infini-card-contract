@@ -35,7 +35,8 @@ When the Admin needs to withdraw funds from InfiniCardVault to the CEX, the With
         address token,
         uint256 amount,
         address custodian,
-        address strategy
+        address strategy,
+        bytes calldata redeemInfo
     ) onlyRole(INFINI_BACKEND_ROLE) external returns(uint256 actualAmount) {
         _isTokenValid(token);
         _isCusdianValid(custodian);
@@ -54,7 +55,7 @@ When the Admin needs to withdraw funds from InfiniCardVault to the CEX, the With
 
             // amount maybe changed (less than requested, due to slippage/fee/etc.), 
             // so we use actualGetAmount to withdraw
-            actualAmount = _withdraw_from_strategy(strategy, amount);
+            actualAmount = _withdraw_from_strategy(strategy, amount, redeemInfo);
         }
 
         _transferAsset(token, actualAmount, custodian);

@@ -56,7 +56,8 @@ contract InfiniCardController is AccessControl, StrategyUtils {
 
     function _withdraw_from_strategy(
         address strategy,
-        uint256 amount
+        uint256 amount,
+        bytes calldata redeemInfo
     ) internal returns (uint256 actualGetAmount) {
         _isStrategyValid(strategy);
 
@@ -64,7 +65,7 @@ contract InfiniCardController is AccessControl, StrategyUtils {
         if (_isBalanceEnough(strategy, underlyingToken, amount)) {
             actualGetAmount = IStrategyVault(strategy).withdraw(underlyingToken, amount);
         } else {
-            uint256 actualRedeemedAmount = IStrategyVault(strategy).redeem(amount);
+            uint256 actualRedeemedAmount = IStrategyVault(strategy).redeem(amount, redeemInfo);
 
             actualGetAmount = IStrategyVault(strategy).withdraw(underlyingToken, actualRedeemedAmount);            
         }

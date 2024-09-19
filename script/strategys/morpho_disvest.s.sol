@@ -43,17 +43,17 @@ contract MorphoDisvestScript is Script {
         uint256 position = InfiniMorphoStrategyVault(morpho).getPosition();
         console.log("position", position);
 
-        IInfiniCardVault(infiniCardVault).redeem(address(morpho), position );
+        IInfiniCardVault(infiniCardVault).redeem(address(morpho), position, "");
         console.log("redeem finished");
 
         uint256 usdcBalance = IERC20(USDC).balanceOf(morpho);
-        IInfiniCardVault(infiniCardVault).withdrawFromStrategy(address(morpho), usdcBalance);
+        IInfiniCardVault(infiniCardVault).withdrawFromStrategy(address(morpho), usdcBalance, "");
         console.log("withdraw finished");
 
         uint256 usdcBalance2 = IERC20(USDC).balanceOf(infiniCardVault);
         console.log("usdcBalance2", usdcBalance2);
 
-        IInfiniCardVault(infiniCardVault).withdrawToCEX(USDC, usdcBalance2, shaneson, address(morpho));
+        IInfiniCardVault(infiniCardVault).withdrawToCEX(USDC, usdcBalance2, shaneson, address(morpho), "");
         console.log("withdrawToCEX finished");
 
         vm.stopBroadcast();

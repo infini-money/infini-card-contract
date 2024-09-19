@@ -10,9 +10,9 @@ interface IStrategyVault {
 
     function shareToken() external view returns (address);
 
-    function deposit(uint256 _amount) external;
+    function deposit(uint256 _amount, bytes calldata depositInfo) external;
 
-    function redeem(uint256 _amount) external returns (uint256);
+    function redeem(uint256 _amount, bytes calldata redeemInfo) external returns (uint256);
 
     function withdraw(address token, uint256 _amount) external returns (uint256);
 

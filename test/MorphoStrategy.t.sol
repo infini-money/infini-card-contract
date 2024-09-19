@@ -25,7 +25,8 @@ contract MorphoStrategyTesting is BaseTest, StrategyUtils {
         vm.startPrank(shaneson);
         infiniCardVault.invest(
             address(infiniMorphoStrategy),
-            amount
+            amount,
+            ""
         );
         vm.stopPrank();
         uint256 vaultShare = IERC20(MorphoUSDCUSD04626Vault).balanceOf(address(infiniMorphoStrategy)) ;
@@ -42,7 +43,8 @@ contract MorphoStrategyTesting is BaseTest, StrategyUtils {
         vm.startPrank(shaneson);
         infiniCardVault.invest(
             address(infiniMorphoStrategy),
-            amount
+            amount,
+            ""
         );
         vm.stopPrank();
 
@@ -55,7 +57,8 @@ contract MorphoStrategyTesting is BaseTest, StrategyUtils {
         vm.startPrank(shaneson);
         uint256 actualAmount = infiniCardVault.redeem(
             address(infiniMorphoStrategy),
-            amount * 2
+            amount * 2,
+            ""  
         );
         vm.stopPrank();
 

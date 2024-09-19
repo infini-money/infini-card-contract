@@ -17,7 +17,8 @@ contract InfiniCardVaultTesting is BaseTest {
         vm.startPrank(shaneson);
         infiniCardVault.invest(
             address(infiniMorphoStrategy),
-            100000 * 10**6
+            100000 * 10**6,
+            ""
         );
     }
 
@@ -27,7 +28,8 @@ contract InfiniCardVaultTesting is BaseTest {
         vm.startPrank(shaneson);
         infiniCardVault.invest(
             address(infiniMorphoStrategy),
-            100000 * 10**6
+            100000 * 10**6,
+            ""
         );
 
         require(IERC20(USDCAddress).balanceOf(address(infiniCardVault)) == 0, "USDT balance should be 0");
@@ -38,7 +40,8 @@ contract InfiniCardVaultTesting is BaseTest {
             USDCAddress, 
             100000 * 10**6, 
             shaneson, 
-            address(infiniMorphoStrategy)
+            address(infiniMorphoStrategy),
+            ""
         );
 
         require(IERC20(USDCAddress).balanceOf(shaneson) == beforeAmount + actualAmount, "USDT balance should be actualAmount");
