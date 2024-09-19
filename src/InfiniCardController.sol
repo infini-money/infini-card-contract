@@ -6,28 +6,29 @@ import {IStrategyVault} from "./interfaces/IStrategyVault.sol";
 
 contract InfiniCardController is AccessControl, StrategyUtils {
 
-    mapping(address => bool) strategyWhiteList;
-    mapping(address => bool) custodianWhiteList;
-    mapping(address => bool) tokenWhiteList;
+    address public constant WITHDRAWOUT_STRATEGY_ADDRESS = address(0);
 
     address[] strategyList;
     address[] tokenList;
     address[] custodianList;
-
-    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
-    address public constant WITHDRAWOUT_STRATEGY_ADDRESS = address(0);
-    bytes32 public constant INFINI_BACKEND_ROLE = keccak256("INFINI_BACKEND_ROLE");
 
     error StrategyInvalid();
     error CustianInvalid(); 
     error TokenInvalid();
     error TokenMismatch();
 
-    constructor(address _admin_role, address _operator_role, address _infinity_backend_role) {
-        _grantRole(DEFAULT_ADMIN_ROLE, _admin_role);
+    mapping(address => bool) strategyWhiteList;
+    mapping(address => bool) custodianWhiteList;
+    mapping(address => bool) tokenWhiteList;
+
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    bytes32 public constant INFINI_BACKEND_ROLE = keccak256("INFINI_BACKEND_ROLE");
+    bytes32 public constant STRATEGY_OPERATOR_ROLE = keccak256("STRATEGY_STRATEGY_OPERATOR_ROLE");
+
+    constructor(address _admin_role, address _strategy_operator_role, address _infinity_backend_role) {
         _grantRole(ADMIN_ROLE, _admin_role);
-        _grantRole(OPERATOR_ROLE, _operator_role);
+        _grantRole(DEFAULT_ADMIN_ROLE, _admin_role);
+        _grantRole(STRATEGY_OPERATOR_ROLE, _strategy_operator_role);
         _grantRole(INFINI_BACKEND_ROLE, _infinity_backend_role);
     }
 
