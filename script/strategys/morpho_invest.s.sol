@@ -29,7 +29,7 @@ contract MorphoInvestScript is Script {
         address payable infiniCardVault = payable(0x09E52AA36484c20288D9C148458Ea4DA991118Af);
 
         uint256 usdcBalance = IERC20(USDC).balanceOf(vault);
-        InfiniCardVault(infiniCardVault).invest(address(morpho), usdcBalance);
+        InfiniCardVault(infiniCardVault).invest(address(morpho), usdcBalance, "");
 
         vm.stopBroadcast();
 

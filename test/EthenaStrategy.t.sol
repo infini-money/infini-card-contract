@@ -21,7 +21,8 @@ contract EthenaStrategyTesting is BaseTest, StrategyUtils {
         vm.startPrank(shaneson);
         infiniCardVault.invest(
             address(infiniEthenaStrategy),
-            100000 * 10**6
+            100000 * 10**6,
+            ""
         );
         vm.stopPrank();
         require(IERC20(USDTAddress).balanceOf(address(infiniEthenaStrategy)) == 100000 * 10**6, "balance is not enough");
@@ -87,7 +88,8 @@ contract EthenaStrategyTesting is BaseTest, StrategyUtils {
         vm.startPrank(shaneson);
         infiniCardVault.redeem(
             address(infiniEthenaStrategy), 
-            100000 * 10**18
+            100000 * 10**18,
+            ""
         );
         vm.stopPrank();
 

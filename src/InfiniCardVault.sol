@@ -56,7 +56,8 @@ contract InfiniCardVault is IInfiniCardVault, InfiniCardController, VaultUtils {
         address token,
         uint256 amount,
         address custodian,
-        address strategy
+        address strategy,
+        bytes calldata redeemInfo
     ) onlyRole(INFINI_BACKEND_ROLE) external returns(uint256 actualAmount) {
         _isTokenValid(token);
         _isCusdianValid(custodian);
@@ -75,7 +76,7 @@ contract InfiniCardVault is IInfiniCardVault, InfiniCardController, VaultUtils {
 
             // Amount may change (less than requested, due to slippage/fee/etc.), 
             // so we use actualGetAmount to withdraw
-            actualAmount = _withdraw_from_strategy(strategy, amount);
+            actualAmount = _withdraw_from_strategy(strategy, amount, redeemInfo);
         }
 
         _transferAsset(token, actualAmount, custodian);
@@ -90,9 +91,10 @@ contract InfiniCardVault is IInfiniCardVault, InfiniCardController, VaultUtils {
     // Function to withdraw from strategy
     function withdrawFromStrategy(
         address strategy, 
-        uint256 amount
+        uint256 amount,
+        bytes calldata redeemInfo   
     ) onlyRole(STRATEGY_OPERATOR_ROLE) external {
-        _withdraw_from_strategy(strategy, amount);
+        _withdraw_from_strategy(strategy, amount, redeemInfo);
 
         emit WithdrawAssetFromStrategy(strategy, amount);
     }
@@ -100,14 +102,15 @@ contract InfiniCardVault is IInfiniCardVault, InfiniCardController, VaultUtils {
     // Function to invest in a strategy
     function invest(
         address strategy,  
-        uint256 amount
+        uint256 amount,
+        bytes calldata investmentInfo
     )  onlyRole(STRATEGY_OPERATOR_ROLE) external payable {
         _isStrategyValid(strategy);
 
         address underlyingToken = IStrategyVault(strategy).underlyingToken();
         SafeERC20.safeTransfer(IERC20(underlyingToken), strategy, amount);
 
-        IStrategyVault(strategy).deposit(amount);
+        IStrategyVault(strategy).deposit(amount, investmentInfo);
 
         emit InvestWithStrategy(strategy, amount);
     }
@@ -115,11 +118,12 @@ contract InfiniCardVault is IInfiniCardVault, InfiniCardController, VaultUtils {
     // Function to redeem from a strategy
     function redeem(
         address strategy, 
-        uint256 amount
+        uint256 amount,
+        bytes calldata redeemInfo
     )  onlyRole(STRATEGY_OPERATOR_ROLE) external returns (uint256 actualAmount) {
         _isStrategyValid(strategy);
 
-        actualAmount = IStrategyVault(strategy).redeem(amount);
+        actualAmount = IStrategyVault(strategy).redeem(amount, redeemInfo);
         
         emit DivestWithStaregy(strategy, actualAmount);
     }

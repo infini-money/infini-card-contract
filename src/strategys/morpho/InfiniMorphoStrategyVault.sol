@@ -70,12 +70,12 @@ contract InfiniMorphoStrategyVault is BaseStrategyVault, IStrategyManager {
         emit Settlement(shareToken, settleProfitShare, protocolProfitShare);
     }
 
-    function deposit(uint256 amount) virtual external override  onlyRole(INFINI_CARD_VAULT) {
+    function deposit(uint256 amount, bytes calldata) virtual external override  onlyRole(INFINI_CARD_VAULT) {
         if ( getBalance(underlyingToken) < amount ) revert UnderlyingTokenIsNotEnough();
         _deposit(amount);
     }
 
-    function redeem(uint256 amount) virtual external override  onlyRole(INFINI_CARD_VAULT) returns (uint256 actualRedeemedAmount) {
+    function redeem(uint256 amount, bytes calldata) virtual external override  onlyRole(INFINI_CARD_VAULT) returns (uint256 actualRedeemedAmount) {
         if (amount > vaultPosition) revert AmountCannotBeGreaterThanPosition();
         uint256 shouldRedeemSharesAmount = IERC4626(shareToken).convertToShares(amount);
 
