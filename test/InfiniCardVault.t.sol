@@ -33,7 +33,6 @@ contract InfiniCardVaultTesting is BaseTest {
         require(IERC20(USDCAddress).balanceOf(address(infiniCardVault)) == 0, "USDT balance should be 0");
         vm.warp(block.timestamp + 2 weeks);
 
-
         uint256 beforeAmount = IERC20(USDCAddress).balanceOf(shaneson);
         uint256 actualAmount = infiniCardVault.withdrawToCEX(
             USDCAddress, 
