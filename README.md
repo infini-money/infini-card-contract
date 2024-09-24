@@ -142,14 +142,12 @@ The undistributed effortless interest is distributed into the poistion, part of 
 We use a ToB solution in conjunction with Ethena, which mainly uses deletaSigned to authorize my EthenaVault to the EthenaMinting contract. We sign off-chain, transmit it to the Ethena server via http, submit the transaction, and transfer our assets to complete the Mint. The Redeem process is similar.
 
 ```solidity
-    //TODO: 需要传入signature，第一是验证签名，第二是得到实际需要deposit的USDT的数量
     function deposit(uint256 amount) external override onlyRole(INFINI_CARD_VAULT) {
         if ( getBalance(underlyingToken) < amount ) revert UnderlyingTokenIsNotEnough();
         SafeERC20.forceApprove(IERC20(underlyingToken), ethenaMintingAddress, amount);
         emit DepositFinished(amount);
     }
 
-    //TODO: 需要传入signature，第一是验证签名，第二是得到实际赎回的USDT的数量
     function redeem(uint256 amount) external override onlyRole(INFINI_CARD_VAULT) returns (uint256 actualRedeemedAmount) {
         if ( getBalance(shareToken) < amount) revert ShareTokenIsNotEnough();
         SafeERC20.forceApprove(IERC20(shareToken), ethenaMintingAddress, amount);
